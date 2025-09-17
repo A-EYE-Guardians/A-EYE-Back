@@ -1,0 +1,13 @@
+# MediaMTX 기본값으로 대부분 동작합니다. 여기서는 pi 경로만 퍼블리셔 허용으로 명시.
+# 필요시 인증/대역폭 제한 등 확장 가능.
+
+
+paths:
+  pi:
+    source: publisher # 외부 퍼블리셔(Pi)가 푸시하는 경로
+
+webrtcICEHostNAT1To1IPs:
+  - 192.168.162.36
+
+# LAN이면 STUN/TURN 불필요
+webrtcICEServers: []

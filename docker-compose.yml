@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: mediamtx
+    restart: unless-stopped
+    ports:
+      - "8554:8554" # RTSP (tcp)
+      - "8888:8888" # HLS/HTTP
+      - "8889:8889"        # WebRTC HTTP (WHEP/WHIP)  ✅ 추가
+      - "8189:8189/udp"    # WebRTC ICE/UDP           ✅ 추가
+    volumes:
+      - ./mediamtx.yml:/mediamtx.yml:ro
+
+
+  backend:
+    build: ./server
+    container_name: ai-backend
+    environment:
+      - RTSP_URL=rtsp://mediamtx:8554/pi # 파이프라인이 구독할 스트림
+    volumes:
+      - ./server:/app
+      - ./server/app/web:/app/app/web:ro   # ← 추가
+    ports:
+      - "8000:8000" # FastAPI
+    depends_on:
+      - mediamtx
