@@ -7,21 +7,42 @@ services:
     ports:
       - "8554:8554" # RTSP (tcp)
       - "8888:8888" # HLS/HTTP
-      - "8889:8889"        # WebRTC HTTP (WHEP/WHIP)  ✅ 추가
-      - "8189:8189/udp"    # WebRTC ICE/UDP           ✅ 추가
+      - "8889:8889" # WebRTC HTTP (WHEP/WHIP)  ✅ 추가
+      - "8189:8189/udp" # WebRTC ICE/UDP           ✅ 추가
     volumes:
       - ./mediamtx.yml:/mediamtx.yml:ro
-
 
   backend:
     build: ./server
     container_name: ai-backend
     environment:
       - RTSP_URL=rtsp://mediamtx:8554/pi # 파이프라인이 구독할 스트림
+      - DETECTOR_WEIGHTS=/app/app/models/yoloe-11s-seg-pf.pt
     volumes:
       - ./server:/app
-      - ./server/app/web:/app/app/web:ro   # ← 추가
+      - ./server/app/web:/app/app/web:ro # ← 추가
+      - ./server/app/models:/app/app/models:ro
+      - ./server/app/uploads:/app/app/uploads
     ports:
       - "8000:8000" # FastAPI
     depends_on:
       - mediamtx
+
+  backend-chanan:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.chanan # ← 본인 전용 도커파일 이름
+    container_name: ai-backend-chanan
+    environment:
+      - RTSP_URL=rtsp://mediamtx:8554/pi
+      - DETECTOR_WEIGHTS=/app/app/models/yoloe-11s-seg-pf.pt
+    volumes:
+      - ./server:/app
+      - ./server/app/web:/app/app/web:ro
+      - ./server/app/models:/app/app/models:ro
+      - ./server/app/uploads:/app/app/uploads
+    ports:
+      - "8001:8000" # ← 포트만 다르게
+    depends_on:
+      - mediamtx
+    profiles: ["chanan"]
