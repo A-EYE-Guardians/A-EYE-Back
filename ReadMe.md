@@ -19,6 +19,7 @@ powershell 열기
 
 입력:
 보드1: ssh raspberrypi@192.168.162.44 
+
 보드2: ssh raspberrypi@192.168.162.68
 
 비밀번호: 1357924680
@@ -30,7 +31,7 @@ mkdir -p ~/streaming && cd ~/streaming
 nano video_cam1.sh
 
 
-#### 그 안에
+#### 파이 코드
 set -euo pipefail
 
 SERVER_IP="192.168.162.36"
@@ -63,7 +64,7 @@ Ctrl+X 로 나가기
  mkdir -p ~/streaming && cd ~/streaming
 nano video_cam2.sh
 
-#### 그 안에
+#### 파이 코드
 set -euo pipefail
 
 SERVER_IP="192.168.162.36"
@@ -92,15 +93,4 @@ ffmpeg -hide_banner -loglevel warning \
 ./video_cam2.sh
 
 브라우저에 http:// 내 IP :8000/web  으로 접속
-
-## 흐름
-### 1.카메라 입력
-
-Pi에서 RTSP URl로 프레임을 줌
-
-consumers/rtsp_consumer.py가 RTSP에서 프레임을 뽑아서 종류와 load형식으로 줌
-
-
-## 모델 끼우기
-pipelines에 각 모델 넣고 import 하면 싱글톤 인스턴스로 PipelineManager 실행
 
